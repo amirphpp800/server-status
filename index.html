@@ -1,432 +1,671 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
+
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>وضعیت سرورها | VPN Status</title>
-  <meta name="description" content="داشبورد" />
-  <link rel="preconnect" href="https://flagcdn.com" crossorigin>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Vazirmatn:wght@400;600;700&display=swap" rel="stylesheet">
-  <style>
-    /* Reset & base */
-    *, *::before, *::after { box-sizing: border-box; }
-    html, body { height: 100%; }
-    body {
-      margin: 0;
-      font-family: Vazirmatn, Inter, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      color: #E6E6E9;
-      background: #0a0b0d; /* deeper solid dark */
-      overflow-x: hidden;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-      text-rendering: optimizeLegibility;
-      line-height: 1.6;
-    }
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>وضعیت سرورها | VPN Status</title>
+    <meta name="description" content="داشبورد" />
+    <link rel="preconnect" href="https://flagcdn.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Vazirmatn:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        /* Reset & base */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+        }
 
-    /* Subtle moving blobs (liquid background) */
-    .blob {
-      position: fixed;
-      inset: auto auto -200px -200px;
-      width: 600px; height: 600px;
-      background: radial-gradient(circle at 30% 30%, rgba(0, 255, 255, 0.12), transparent 60%);
-      filter: blur(60px);
-      animation: float1 24s ease-in-out infinite;
-      pointer-events: none;
-      z-index: 0;
-    }
-    .blob:nth-child(2) {
-      inset: -200px -200px auto auto;
-      background: radial-gradient(circle at 70% 70%, rgba(255, 0, 128, 0.12), transparent 60%);
-      animation: float2 28s ease-in-out infinite;
-    }
-    @keyframes float1 { 0%,100% { transform: translate(0,0)} 50% { transform: translate(80px,-40px)} }
-    @keyframes float2 { 0%,100% { transform: translate(0,0)} 50% { transform: translate(-60px,60px)} }
+        html,
+        body {
+            height: 100%;
+        }
 
-    /* Header */
-    header {
-      position: sticky;
-      top: 0;
-      z-index: 5;
-      backdrop-filter: blur(14px) saturate(140%);
-      -webkit-backdrop-filter: blur(14px) saturate(140%);
-      background: rgba(15,17,23,0.8);
-      border-bottom: 1px solid rgba(255,255,255,0.08);
-    }
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 20px 20px;
-    }
-    .brand {
-      display: flex; align-items: center; gap: 12px;
-    }
-    .brand .logo {
-      width: 38px; height: 38px; border-radius: 12px;
-      background: rgba(0,255,255,0.12);
-      box-shadow: 0 0 24px rgba(0,255,255,0.25), inset 0 0 24px rgba(255,0,128,0.15);
-    }
-    h1 { font-size: 20px; margin: 0; font-weight: 700; letter-spacing: 0.3px; }
-    .subtitle { color: #AAB; font-size: 12px; }
+        body {
+            margin: 0;
+            font-family: Vazirmatn, Inter, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            color: #E6E6E9;
+            background: #0a0b0d;
+            /* deeper solid dark */
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
+            line-height: 1.6;
+        }
 
-    /* Controls */
-    .controls {
-      display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between;
-      margin-top: 14px;
-    }
-    .search {
-      flex: 1 1 260px; display: flex; align-items: center; gap: 10px;
-      padding: 10px 12px; border-radius: 14px;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.08);
-      box-shadow: 0 8px 24px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.04);
-      backdrop-filter: blur(16px) saturate(120%);
-    }
-    .search input {
-      flex: 1; border: none; outline: none; background: transparent; color: #EAEAF0; font-size: 14px;
-    }
-    .legend { display: flex; gap: 8px; align-items: center; color: #9FA6B2; font-size: 12px; }
-    .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
-    .dot.active { background: #22c55e; box-shadow: 0 0 12px #22c55e90; }
-    .dot.inactive { background: #ef4444; box-shadow: 0 0 12px #ef444490; }
+        /* Subtle moving blobs (liquid background) */
+        .blob {
+            position: fixed;
+            inset: auto auto -200px -200px;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle at 30% 30%, rgba(0, 255, 255, 0.12), transparent 60%);
+            filter: blur(60px);
+            animation: float1 24s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
 
-    /* Grid */
-    .grid {
-      position: relative;
-      z-index: 1;
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-      gap: 16px;
-      padding: 24px 20px 64px;
-      max-width: 1200px;
-      margin: 0 auto;
-    }
+        .blob:nth-child(2) {
+            inset: -200px -200px auto auto;
+            background: radial-gradient(circle at 70% 70%, rgba(255, 0, 128, 0.12), transparent 60%);
+            animation: float2 28s ease-in-out infinite;
+        }
 
-    /* Glass card */
-    .card {
-      position: relative;
-      overflow: hidden;
-      border-radius: 18px;
-      background: rgba(255,255,255,0.045);
-      border: 1px solid rgba(255,255,255,0.12);
-      box-shadow: 0 24px 60px rgba(0,0,0,0.72), inset 0 1px 0 rgba(255,255,255,0.07);
-      backdrop-filter: blur(24px) saturate(160%);
-      -webkit-backdrop-filter: blur(24px) saturate(160%);
-      transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
-    }
-    .card::before {
-      content: "";
-      position: absolute; inset: -40% -40% auto auto; width: 220px; height: 220px;
-      background: transparent; /* no gradient glow */
-      filter: none; pointer-events: none;
-      transform: rotate(25deg);
-    }
-    .card:hover { transform: translateY(-4px); box-shadow: 0 22px 56px rgba(0,0,0,0.72); border-color: rgba(255,255,255,0.22); }
+        @keyframes float1 {
 
-    .card-head { display: flex; align-items: center; gap: 12px; padding: 14px 14px 8px; }
-    .flag { height: 24px; width: auto; border-radius: 5px; overflow: hidden; box-shadow: 0 0 0 1px rgba(255,255,255,0.08); display: block; }
-    .country { font-weight: 800; letter-spacing: .2px; }
-    .status {
-      margin-right: auto; font-size: 12px; padding: 4px 10px; border-radius: 999px; text-transform: uppercase;
-      border: 1px solid rgba(255,255,255,0.12);
-    }
-    .status.active { color: #16a34a; background: rgba(22,163,74,0.12); border-color: rgba(22,163,74,0.25); box-shadow: 0 0 14px rgba(22,163,74,0.25) inset; }
-    .status.inactive { color: #ef4444; background: rgba(239,68,68,0.12); border-color: rgba(239,68,68,0.25); box-shadow: 0 0 14px rgba(239,68,68,0.2) inset; }
+            0%,
+            100% {
+                transform: translate(0, 0)
+            }
 
-    .meta { display: flex; gap: 8px; align-items: center; padding: 0 14px 14px; flex-wrap: wrap; }
-    .badge { font-size: 11px; padding: 6px 10px; border-radius: 10px; color: #DDE1E7; border: 1px solid rgba(255,255,255,0.08); background: rgba(255,255,255,0.04); }
-    .badge.proto { background: rgba(255,255,255,0.04); }
-    .badge.dev { color: #f59e0b; background: rgba(245,158,11,0.12); border-color: rgba(245,158,11,0.25); }
-    .badge.ping { color: #93c5fd; border-color: rgba(147,197,253,0.25); background: rgba(147,197,253,0.12); }
-    .badge.load { color: #fca5a5; border-color: rgba(252,165,165,0.25); background: rgba(252,165,165,0.12); }
-    .badge.rank { color: #86efac; border-color: rgba(134,239,172,0.25); background: rgba(134,239,172,0.12); font-weight: 700; }
+            50% {
+                transform: translate(80px, -40px)
+            }
+        }
 
-    /* Glass panels for sections in development */
-    .panel {
-      position: relative;
-      max-width: 1200px;
-      margin: 12px auto 24px;
-      padding: 18px 20px;
-      border-radius: 18px;
-      background: rgba(255,255,255,0.045);
-      border: 1px solid rgba(255,255,255,0.12);
-      box-shadow: 0 22px 60px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.07);
-      backdrop-filter: blur(22px) saturate(160%);
-      -webkit-backdrop-filter: blur(22px) saturate(160%);
-      display: flex; align-items: center; gap: 14px;
-    }
-    .panel .icon {
-      width: 36px; height: 36px; border-radius: 10px;
-      background: rgba(0,255,255,0.12);
-      display: grid; place-items: center;
-      box-shadow: 0 0 24px rgba(0,255,255,0.18), inset 0 0 18px rgba(255,0,128,0.12);
-    }
-    .panel .msg { color: #cbd5e1; font-size: 14px; }
+        @keyframes float2 {
 
-    .footer { text-align: center; color: #9AA3B2; font-size: 12px; padding: 18px 0 40px; }
-    .small { font-size: 11px; color: #8993a3; }
+            0%,
+            100% {
+                transform: translate(0, 0)
+            }
 
-    /* Section titles */
-    .section { max-width: 1200px; margin: 10px auto 0; padding: 0 20px; }
-    .section h2 {
-      font-size: 16px; font-weight: 800; margin: 24px 0 6px;
-      color: #E6E8EE; letter-spacing: 0.4px;
-      text-shadow: 0 0 24px rgba(0,255,255,0.18);
-    }
-    .section .note { color: #cbd5e1; font-size: 13px; opacity: .9; }
+            50% {
+                transform: translate(-60px, 60px)
+            }
+        }
 
-    /* Toggle (future use) */
-    .toggle { display: inline-flex; gap: 8px; padding: 6px; border-radius: 999px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); }
-    .toggle button { background: transparent; border: none; color: #cdd6f4; font-size: 12px; padding: 6px 10px; border-radius: 999px; cursor: pointer; }
-    .toggle button.active { background: rgba(0,255,255,0.12); color: #eaffff; box-shadow: 0 0 16px rgba(0,255,255,0.15) inset; }
+        /* Header */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 5;
+            backdrop-filter: blur(14px) saturate(140%);
+            -webkit-backdrop-filter: blur(14px) saturate(140%);
+            background: rgba(15, 17, 23, 0.8);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
 
-    a { color: #7dd3fc; text-decoration: none; }
-    a:hover { text-decoration: underline; }
-  </style>
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px 20px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand .logo {
+            width: 38px;
+            height: 38px;
+            border-radius: 12px;
+            background: rgba(0, 255, 255, 0.12);
+            box-shadow: 0 0 24px rgba(0, 255, 255, 0.25), inset 0 0 24px rgba(255, 0, 128, 0.15);
+        }
+
+        h1 {
+            font-size: 20px;
+            margin: 0;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+        }
+
+        .subtitle {
+            color: #AAB;
+            font-size: 12px;
+        }
+
+        /* Controls */
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 14px;
+        }
+
+        .search {
+            flex: 1 1 260px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(16px) saturate(120%);
+        }
+
+        .search input {
+            flex: 1;
+            border: none;
+            outline: none;
+            background: transparent;
+            color: #EAEAF0;
+            font-size: 14px;
+        }
+
+        .legend {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            color: #9FA6B2;
+            font-size: 12px;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .dot.active {
+            background: #22c55e;
+            box-shadow: 0 0 12px #22c55e90;
+        }
+
+        .dot.inactive {
+            background: #ef4444;
+            box-shadow: 0 0 12px #ef444490;
+        }
+
+        /* Grid */
+        .grid {
+            position: relative;
+            z-index: 1;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 16px;
+            padding: 24px 20px 64px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Glass card */
+        .card {
+            position: relative;
+            overflow: hidden;
+            border-radius: 18px;
+            background: rgba(255, 255, 255, 0.045);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            box-shadow: 0 24px 60px rgba(0, 0, 0, 0.72), inset 0 1px 0 rgba(255, 255, 255, 0.07);
+            backdrop-filter: blur(24px) saturate(160%);
+            -webkit-backdrop-filter: blur(24px) saturate(160%);
+            transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+        }
+
+        .card::before {
+            content: "";
+            position: absolute;
+            inset: -40% -40% auto auto;
+            width: 220px;
+            height: 220px;
+            background: transparent;
+            /* no gradient glow */
+            filter: none;
+            pointer-events: none;
+            transform: rotate(25deg);
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 22px 56px rgba(0, 0, 0, 0.72);
+            border-color: rgba(255, 255, 255, 0.22);
+        }
+
+        .card-head {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 14px 8px;
+        }
+
+        .flag {
+            height: 24px;
+            width: auto;
+            border-radius: 5px;
+            overflow: hidden;
+            box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08);
+            display: block;
+        }
+
+        .country {
+            font-weight: 800;
+            letter-spacing: .2px;
+        }
+
+        .status {
+            margin-right: auto;
+            font-size: 12px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            text-transform: uppercase;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+
+        .status.active {
+            color: #16a34a;
+            background: rgba(22, 163, 74, 0.12);
+            border-color: rgba(22, 163, 74, 0.25);
+            box-shadow: 0 0 14px rgba(22, 163, 74, 0.25) inset;
+        }
+
+        .status.inactive {
+            color: #ef4444;
+            background: rgba(239, 68, 68, 0.12);
+            border-color: rgba(239, 68, 68, 0.25);
+            box-shadow: 0 0 14px rgba(239, 68, 68, 0.2) inset;
+        }
+
+        .meta {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            padding: 0 14px 14px;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            font-size: 11px;
+            padding: 6px 10px;
+            border-radius: 10px;
+            color: #DDE1E7;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .badge.proto {
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .badge.dev {
+            color: #f59e0b;
+            background: rgba(245, 158, 11, 0.12);
+            border-color: rgba(245, 158, 11, 0.25);
+        }
+
+        .badge.ping {
+            color: #93c5fd;
+            border-color: rgba(147, 197, 253, 0.25);
+            background: rgba(147, 197, 253, 0.12);
+        }
+
+        .badge.load {
+            color: #fca5a5;
+            border-color: rgba(252, 165, 165, 0.25);
+            background: rgba(252, 165, 165, 0.12);
+        }
+
+        .badge.rank {
+            color: #86efac;
+            border-color: rgba(134, 239, 172, 0.25);
+            background: rgba(134, 239, 172, 0.12);
+            font-weight: 700;
+        }
+
+        /* Glass panels for sections in development */
+        .panel {
+            position: relative;
+            max-width: 1200px;
+            margin: 12px auto 24px;
+            padding: 18px 20px;
+            border-radius: 18px;
+            background: rgba(255, 255, 255, 0.045);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            box-shadow: 0 22px 60px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.07);
+            backdrop-filter: blur(22px) saturate(160%);
+            -webkit-backdrop-filter: blur(22px) saturate(160%);
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .panel .icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: rgba(0, 255, 255, 0.12);
+            display: grid;
+            place-items: center;
+            box-shadow: 0 0 24px rgba(0, 255, 255, 0.18), inset 0 0 18px rgba(255, 0, 128, 0.12);
+        }
+
+        .panel .msg {
+            color: #cbd5e1;
+            font-size: 14px;
+        }
+
+        .footer {
+            text-align: center;
+            color: #9AA3B2;
+            font-size: 12px;
+            padding: 18px 0 40px;
+        }
+
+        .small {
+            font-size: 11px;
+            color: #8993a3;
+        }
+
+        /* Section titles */
+        .section {
+            max-width: 1200px;
+            margin: 10px auto 0;
+            padding: 0 20px;
+        }
+
+        .section h2 {
+            font-size: 16px;
+            font-weight: 800;
+            margin: 24px 0 6px;
+            color: #E6E8EE;
+            letter-spacing: 0.4px;
+            text-shadow: 0 0 24px rgba(0, 255, 255, 0.18);
+        }
+
+        .section .note {
+            color: #cbd5e1;
+            font-size: 13px;
+            opacity: .9;
+        }
+
+        /* Toggle (future use) */
+        .toggle {
+            display: inline-flex;
+            gap: 8px;
+            padding: 6px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .toggle button {
+            background: transparent;
+            border: none;
+            color: #cdd6f4;
+            font-size: 12px;
+            padding: 6px 10px;
+            border-radius: 999px;
+            cursor: pointer;
+        }
+
+        .toggle button.active {
+            background: rgba(0, 255, 255, 0.12);
+            color: #eaffff;
+            box-shadow: 0 0 16px rgba(0, 255, 255, 0.15) inset;
+        }
+
+        a {
+            color: #7dd3fc;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
+
 <body>
-  <!-- decorative blobs removed per request -->
+    <!-- decorative blobs removed per request -->
 
-  
 
-  <div id="mainView">
-    <section class="section">
-      <h2>OpenVPN</h2>
-      <div class="note">پروتکل‌های پشتیبانی‌شده: TCP و UDP</div>
-    </section>
 
-    <main class="grid" id="cardsGrid" aria-live="polite"></main>
+    <div id="mainView">
+        <section class="section">
+            <h2>OpenVPN</h2>
+            <div class="note">پروتکل‌های پشتیبانی‌شده: TCP و UDP</div>
+        </section>
 
-    <section class="section">
-      <h2>WireGuard</h2>
-      <div class="note">در حال توسعه — به‌زودی در دسترس خواهد بود</div>
-      <div class="panel" role="status" aria-live="polite">
-        <div class="icon" aria-hidden="true">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9ef" stroke-width="2"><path d="M3 12a9 9 0 1 0 18 0 9 9 0 0 0-18 0Z"/><path d="M7 12h10"/><path d="M12 7v10"/></svg>
+        <main class="grid" id="cardsGrid" aria-live="polite"></main>
+
+        <section class="section">
+            <h2>WireGuard</h2>
+            <div class="note">در حال توسعه — به‌زودی در دسترس خواهد بود</div>
+            <div class="panel" role="status" aria-live="polite">
+                <div class="icon" aria-hidden="true">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9ef" stroke-width="2">
+                        <path d="M3 12a9 9 0 1 0 18 0 9 9 0 0 0-18 0Z" />
+                        <path d="M7 12h10" />
+                        <path d="M12 7v10" />
+                    </svg>
+                </div>
+                <div class="msg">بخش WireGuard در حال توسعه است و به‌زودی با جزئیات و کانفیگ‌ها فعال می‌شود.</div>
+            </div>
+        </section>
+
+        <div id="adminView" style="display:none;">
+            <section class="section">
+                <h2>مدیریت لوکیشن‌ها</h2>
+                <div class="note">فعال/غیرفعال کردن و تنظیم Ping/Load/Rank</div>
+            </section>
+            <div class="panel" style="flex-direction:column; gap:16px;">
+                <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                    <button id="btnBack" class="badge" style="cursor:pointer;">بازگشت</button>
+                    <button id="btnSave" class="badge"
+                        style="cursor:pointer; background: rgba(34,197,94,0.15); border-color: rgba(34,197,94,0.35); color:#86efac;">ذخیره</button>
+                </div>
+                <div class="admin-grid" id="adminGrid"></div>
+            </div>
         </div>
-        <div class="msg">بخش WireGuard در حال توسعه است و به‌زودی با جزئیات و کانفیگ‌ها فعال می‌شود.</div>
-      </div>
-    </section>
 
-  <div id="adminView" style="display:none;">
-    <section class="section">
-      <h2>مدیریت لوکیشن‌ها</h2>
-      <div class="note">فعال/غیرفعال کردن و تنظیم Ping/Load/Rank</div>
-    </section>
-    <div class="panel" style="flex-direction:column; gap:16px;">
-      <div style="display:flex; gap:8px; flex-wrap:wrap;">
-        <button id="btnBack" class="badge" style="cursor:pointer;">بازگشت</button>
-        <button id="btnSave" class="badge" style="cursor:pointer; background: rgba(34,197,94,0.15); border-color: rgba(34,197,94,0.35); color:#86efac;">ذخیره</button>
-      </div>
-      <div class="admin-grid" id="adminGrid"></div>
-    </div>
-  </div>
 
-  
 
-  <script>
-    const LS_KEY = 'vpnLocations';
-    function loadLocations() {
-      try { const j = localStorage.getItem(LS_KEY); if (j) return JSON.parse(j); } catch(e) {}
-      return [
-        { countryFa: 'آلمان', countryEn: 'Germany', code: 'de', active: true, protocols: ['TCP', 'UDP'], ping: '11ms', load: 26, rank: 'High' },
-        { countryFa: 'هلند', countryEn: 'Netherlands', code: 'nl', active: false, protocols: ['TCP', 'UDP'] },
-        { countryFa: 'لاتویا', countryEn: 'Latvia', code: 'lv', active: false, protocols: ['TCP', 'UDP'] },
-        { countryFa: 'سوئیس', countryEn: 'Switzerland', code: 'ch', active: false, protocols: ['TCP', 'UDP'] },
-        { countryFa: 'لهستان', countryEn: 'Poland', code: 'pl', active: false, protocols: ['TCP', 'UDP'] },
-        { countryFa: 'رومانی', countryEn: 'Romania', code: 'ro', active: false, protocols: ['TCP', 'UDP'] },
-        { countryFa: 'ایتالیا', countryEn: 'Italy', code: 'it', active: false, protocols: ['TCP', 'UDP'] },
-        { countryFa: 'آمریکا', countryEn: 'United States', code: 'us', active: false, protocols: ['TCP', 'UDP'] }
-      ];
-    }
-    function saveLocations(v) { try { localStorage.setItem(LS_KEY, JSON.stringify(v)); } catch(e) {} }
+        <script>
+            const LS_KEY = 'vpnLocations';
+            function loadLocations() {
+                try { const j = localStorage.getItem(LS_KEY); if (j) return JSON.parse(j); } catch (e) { }
+                return [
+                    { countryFa: 'آلمان', countryEn: 'Germany', code: 'de', active: true, protocols: ['TCP', 'UDP'], ping: '11ms', load: '26%', rank: 'High' },
+                    { countryFa: 'هلند', countryEn: 'Netherlands', code: 'nl', active: true, protocols: ['TCP', 'UDP'], ping: '12ms', load: '28%', rank: 'Very High' },
+                    { countryFa: 'لاتویا', countryEn: 'Latvia', code: 'lv', active: false, protocols: ['TCP', 'UDP'] },
+                    { countryFa: 'سوئیس', countryEn: 'Switzerland', code: 'ch', active: false, protocols: ['TCP', 'UDP'] },
+                    { countryFa: 'لهستان', countryEn: 'Poland', code: 'pl', active: false, protocols: ['TCP', 'UDP'] },
+                    { countryFa: 'رومانی', countryEn: 'Romania', code: 'ro', active: false, protocols: ['TCP', 'UDP'] },
+                    { countryFa: 'ایتالیا', countryEn: 'Italy', code: 'it', active: false, protocols: ['TCP', 'UDP'] },
+                    { countryFa: 'آمریکا', countryEn: 'United States', code: 'us', active: false, protocols: ['TCP', 'UDP'] }
+                ];
+            }
+            function saveLocations(v) { try { localStorage.setItem(LS_KEY, JSON.stringify(v)); } catch (e) { } }
 
-    let locations = loadLocations();
-    const cardsGrid = document.getElementById('cardsGrid');
+            let locations = loadLocations();
+            const cardsGrid = document.getElementById('cardsGrid');
 
-    function flagSvgUrl(code) {
-      // High-quality scalable SVG from FlagCDN
-      return `https://flagcdn.com/${code}.svg`;
-    }
-    function flagPngUrl(code, size = 64) {
-      // PNG fallback in case SVG fails
-      return `https://flagcdn.com/w${size}/${code}.png`;
-    }
+            function flagSvgUrl(code) {
+                // High-quality scalable SVG from FlagCDN
+                return `https://flagcdn.com/${code}.svg`;
+            }
+            function flagPngUrl(code, size = 64) {
+                // PNG fallback in case SVG fails
+                return `https://flagcdn.com/w${size}/${code}.png`;
+            }
 
-    function createCard({ countryFa, countryEn, code, active, protocols, ping, load, rank }) {
-      const card = document.createElement('article');
-      card.className = 'card';
-      card.setAttribute('role', 'region');
-      card.setAttribute('aria-label', `${countryFa} - ${active ? 'فعال' : 'غیرفعال'}`);
+            function createCard({ countryFa, countryEn, code, active, protocols, ping, load, rank }) {
+                const card = document.createElement('article');
+                card.className = 'card';
+                card.setAttribute('role', 'region');
+                card.setAttribute('aria-label', `${countryFa} - ${active ? 'فعال' : 'غیرفعال'}`);
 
-      const head = document.createElement('div');
-      head.className = 'card-head';
+                const head = document.createElement('div');
+                head.className = 'card-head';
 
-      const flag = document.createElement('img');
-      flag.className = 'flag';
-      flag.alt = countryEn + ' flag';
-      flag.loading = 'lazy';
-      flag.decoding = 'async';
-      flag.src = flagSvgUrl(code);
-      flag.onerror = function () {
-        this.onerror = null;
-        this.src = flagPngUrl(code, 64);
-      };
+                const flag = document.createElement('img');
+                flag.className = 'flag';
+                flag.alt = countryEn + ' flag';
+                flag.loading = 'lazy';
+                flag.decoding = 'async';
+                flag.src = flagSvgUrl(code);
+                flag.onerror = function () {
+                    this.onerror = null;
+                    this.src = flagPngUrl(code, 64);
+                };
 
-      const title = document.createElement('div');
-      title.className = 'country';
-      title.textContent = countryFa;
+                const title = document.createElement('div');
+                title.className = 'country';
+                title.textContent = countryFa;
 
-      const status = document.createElement('span');
-      status.className = 'status ' + (active ? 'active' : 'inactive');
-      status.textContent = active ? 'فعال' : 'غیرفعال';
+                const status = document.createElement('span');
+                status.className = 'status ' + (active ? 'active' : 'inactive');
+                status.textContent = active ? 'فعال' : 'غیرفعال';
 
-      head.appendChild(flag);
-      head.appendChild(title);
-      head.appendChild(status);
+                head.appendChild(flag);
+                head.appendChild(title);
+                head.appendChild(status);
 
-      const meta = document.createElement('div');
-      meta.className = 'meta';
+                const meta = document.createElement('div');
+                meta.className = 'meta';
 
-      const ovpn = document.createElement('span');
-      ovpn.className = 'badge';
-      ovpn.textContent = 'OpenVPN';
-      meta.appendChild(ovpn);
+                const ovpn = document.createElement('span');
+                ovpn.className = 'badge';
+                ovpn.textContent = 'OpenVPN';
+                meta.appendChild(ovpn);
 
-      protocols.forEach(p => {
-        const b = document.createElement('span');
-        b.className = 'badge proto';
-        b.textContent = p;
-        meta.appendChild(b);
-      });
+                protocols.forEach(p => {
+                    const b = document.createElement('span');
+                    b.className = 'badge proto';
+                    b.textContent = p;
+                    meta.appendChild(b);
+                });
 
-      // Metrics (optional per location)
-      if (ping) {
-        const b = document.createElement('span');
-        b.className = 'badge ping';
-        b.textContent = `Ping: ${ping}`;
-        meta.appendChild(b);
-      }
-      if (typeof load === 'number') {
-        const b = document.createElement('span');
-        b.className = 'badge load';
-        b.textContent = `Load: ${load}%`;
-        meta.appendChild(b);
-      }
-      if (rank) {
-        const b = document.createElement('span');
-        b.className = 'badge rank';
-        b.textContent = `Rank: ${rank}`;
-        meta.appendChild(b);
-      }
+                // Metrics (optional per location)
+                if (ping) {
+                    const b = document.createElement('span');
+                    b.className = 'badge ping';
+                    b.textContent = `Ping: ${ping}`;
+                    meta.appendChild(b);
+                }
+                if (typeof load === 'number') {
+                    const b = document.createElement('span');
+                    b.className = 'badge load';
+                    b.textContent = `Load: ${load}%`;
+                    meta.appendChild(b);
+                }
+                if (rank) {
+                    const b = document.createElement('span');
+                    b.className = 'badge rank';
+                    b.textContent = `Rank: ${rank}`;
+                    meta.appendChild(b);
+                }
 
-      card.appendChild(head);
-      card.appendChild(meta);
-      return card;
-    }
+                card.appendChild(head);
+                card.appendChild(meta);
+                return card;
+            }
 
-    function render(list) {
-      cardsGrid.innerHTML = '';
-      list.forEach(item => cardsGrid.appendChild(createCard(item)));
-    }
+            function render(list) {
+                cardsGrid.innerHTML = '';
+                list.forEach(item => cardsGrid.appendChild(createCard(item)));
+            }
 
-    const adminGrid = document.getElementById('adminGrid');
-    const adminView = document.getElementById('adminView');
-    const mainView = document.getElementById('mainView');
-    const btnSave = document.getElementById('btnSave');
-    const btnBack = document.getElementById('btnBack');
+            const adminGrid = document.getElementById('adminGrid');
+            const adminView = document.getElementById('adminView');
+            const mainView = document.getElementById('mainView');
+            const btnSave = document.getElementById('btnSave');
+            const btnBack = document.getElementById('btnBack');
 
-    function buildAdmin() {
-      adminGrid.innerHTML = '';
-      locations.forEach((x, i) => {
-        const row = document.createElement('div');
-        row.style.display = 'grid';
-        row.style.gridTemplateColumns = 'minmax(120px,1fr) 90px 90px 90px 100px 100px';
-        row.style.gap = '8px';
-        row.style.alignItems = 'center';
-        row.style.width = '100%';
+            function buildAdmin() {
+                adminGrid.innerHTML = '';
+                locations.forEach((x, i) => {
+                    const row = document.createElement('div');
+                    row.style.display = 'grid';
+                    row.style.gridTemplateColumns = 'minmax(120px,1fr) 90px 90px 90px 100px 100px';
+                    row.style.gap = '8px';
+                    row.style.alignItems = 'center';
+                    row.style.width = '100%';
 
-        const name = document.createElement('div');
-        name.textContent = x.countryFa;
-        const active = document.createElement('input');
-        active.type = 'checkbox';
-        active.checked = !!x.active;
-        const ping = document.createElement('input');
-        ping.type = 'text';
-        ping.value = x.ping || '';
-        ping.placeholder = 'مثلاً 11ms';
-        const load = document.createElement('input');
-        load.type = 'number';
-        load.min = '0'; load.max = '100';
-        load.value = typeof x.load === 'number' ? x.load : '';
-        const rank = document.createElement('select');
-        ['Low','Medium','High'].forEach(r => { const o = document.createElement('option'); o.value=r; o.textContent=r; rank.appendChild(o); });
-        rank.value = x.rank || '';
-        const protos = document.createElement('div');
-        protos.textContent = (x.protocols||[]).join('/');
+                    const name = document.createElement('div');
+                    name.textContent = x.countryFa;
+                    const active = document.createElement('input');
+                    active.type = 'checkbox';
+                    active.checked = !!x.active;
+                    const ping = document.createElement('input');
+                    ping.type = 'text';
+                    ping.value = x.ping || '';
+                    ping.placeholder = 'مثلاً 11ms';
+                    const load = document.createElement('input');
+                    load.type = 'number';
+                    load.min = '0'; load.max = '100';
+                    load.value = typeof x.load === 'number' ? x.load : '';
+                    const rank = document.createElement('select');
+                    ['Low', 'Medium', 'High'].forEach(r => { const o = document.createElement('option'); o.value = r; o.textContent = r; rank.appendChild(o); });
+                    rank.value = x.rank || '';
+                    const protos = document.createElement('div');
+                    protos.textContent = (x.protocols || []).join('/');
 
-        row.appendChild(name);
-        row.appendChild(active);
-        row.appendChild(ping);
-        row.appendChild(load);
-        row.appendChild(rank);
-        row.appendChild(protos);
-        row.dataset.idx = i;
-        adminGrid.appendChild(row);
-      });
-    }
+                    row.appendChild(name);
+                    row.appendChild(active);
+                    row.appendChild(ping);
+                    row.appendChild(load);
+                    row.appendChild(rank);
+                    row.appendChild(protos);
+                    row.dataset.idx = i;
+                    adminGrid.appendChild(row);
+                });
+            }
 
-    function showMain() {
-      adminView.style.display = 'none';
-      mainView.style.display = '';
-      render(locations);
-    }
-    function showAdmin() {
-      mainView.style.display = 'none';
-      adminView.style.display = '';
-      buildAdmin();
-    }
+            function showMain() {
+                adminView.style.display = 'none';
+                mainView.style.display = '';
+                render(locations);
+            }
+            function showAdmin() {
+                mainView.style.display = 'none';
+                adminView.style.display = '';
+                buildAdmin();
+            }
 
-    function isAdminPath() {
-      const h = (location.hash || '').replace('#','');
-      return location.pathname.endsWith('/admin-active-location') || h === '/admin-active-location';
-    }
-    function go(path) {
-      if (location.protocol === 'file:') {
-        location.hash = path;
-      } else {
-        history.pushState({}, '', path);
-      }
-      route();
-    }
-    function route() {
-      if (isAdminPath()) showAdmin(); else showMain();
-    }
+            function isAdminPath() {
+                const h = (location.hash || '').replace('#', '');
+                return location.pathname.endsWith('/admin-active-location') || h === '/admin-active-location';
+            }
+            function go(path) {
+                if (location.protocol === 'file:') {
+                    location.hash = path;
+                } else {
+                    history.pushState({}, '', path);
+                }
+                route();
+            }
+            function route() {
+                if (isAdminPath()) showAdmin(); else showMain();
+            }
 
-    btnSave.addEventListener('click', () => {
-      const rows = adminGrid.querySelectorAll('div[data-idx]');
-      rows.forEach(row => {
-        const i = parseInt(row.dataset.idx, 10);
-        const inputs = row.querySelectorAll('input, select');
-        const [activeEl, pingEl, loadEl, rankEl] = inputs;
-        const nx = { ...locations[i] };
-        nx.active = activeEl.checked;
-        nx.ping = pingEl.value.trim() || undefined;
-        const lv = parseInt(loadEl.value, 10);
-        nx.load = isNaN(lv) ? undefined : Math.min(100, Math.max(0, lv));
-        nx.rank = rankEl.value || undefined;
-        locations[i] = nx;
-      });
-      saveLocations(locations);
-      go('/');
-    });
+            btnSave.addEventListener('click', () => {
+                const rows = adminGrid.querySelectorAll('div[data-idx]');
+                rows.forEach(row => {
+                    const i = parseInt(row.dataset.idx, 10);
+                    const inputs = row.querySelectorAll('input, select');
+                    const [activeEl, pingEl, loadEl, rankEl] = inputs;
+                    const nx = { ...locations[i] };
+                    nx.active = activeEl.checked;
+                    nx.ping = pingEl.value.trim() || undefined;
+                    const lv = parseInt(loadEl.value, 10);
+                    nx.load = isNaN(lv) ? undefined : Math.min(100, Math.max(0, lv));
+                    nx.rank = rankEl.value || undefined;
+                    locations[i] = nx;
+                });
+                saveLocations(locations);
+                go('/');
+            });
 
-    btnBack.addEventListener('click', () => { go('/'); });
+            btnBack.addEventListener('click', () => { go('/'); });
 
-    window.addEventListener('popstate', route);
-    window.addEventListener('hashchange', route);
-    route();
-  </script>
+            window.addEventListener('popstate', route);
+            window.addEventListener('hashchange', route);
+            route();
+        </script>
 </body>
+
 </html>
