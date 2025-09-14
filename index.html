@@ -468,8 +468,8 @@
             function loadLocations() {
                 try { const j = localStorage.getItem(LS_KEY); if (j) return JSON.parse(j); } catch (e) { }
                 return [
-                    { countryFa: 'آلمان', countryEn: 'Germany', code: 'de', active: true, protocols: ['TCP', 'UDP'], ping: '11ms', load: '26%', rank: 'High' },
-                    { countryFa: 'هلند', countryEn: 'Netherlands', code: 'nl', active: true, protocols: ['TCP', 'UDP'], ping: '12ms', load: '28%', rank: 'Very High' },
+                    { countryFa: 'آلمان', countryEn: 'Germany', code: 'de', active: true, protocols: ['TCP', 'UDP'], ping: '11ms', load: 26, rank: 'High' },
+                    { countryFa: 'هلند', countryEn: 'Netherlands', code: 'nl', active: true, protocols: ['TCP', 'UDP'], ping: '12ms', load: 28, rank: 'Very High' },
                     { countryFa: 'لاتویا', countryEn: 'Latvia', code: 'lv', active: false, protocols: ['TCP', 'UDP'] },
                     { countryFa: 'سوئیس', countryEn: 'Switzerland', code: 'ch', active: false, protocols: ['TCP', 'UDP'] },
                     { countryFa: 'لهستان', countryEn: 'Poland', code: 'pl', active: false, protocols: ['TCP', 'UDP'] },
